@@ -4,27 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Romanic Dictionary & Conjugator</title>
-  <meta name="description" content="A lightweight Romanic dictionary with built-in verb conjugator. Drop it on GitHub Pages/Netlify and share the link." />
+  <meta name="description" content="A lightweight Romanic dictionary with built‑in verb conjugator. Drop it on GitHub Pages/Netlify and share the link." />
   <!-- Social/Discord embed -->
   <meta property="og:title" content="Romanic Dictionary & Conjugator" />
-  <meta property="og:description" content="Search lemmas, see definitions, and auto-conjugate verbs (-ar/-er/-ir) in Presente & Imperfeto." />
+  <meta property="og:description" content="Search lemmas, see definitions, and auto‑conjugate verbs (‑ar/‑er/‑ir) in Presente & Imperfecto." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://dummyimage.com/1200x630/111827/e5e7eb&text=Romanic+Dictionary+%26+Conjugator" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Nice focus ring for keyboard users */
     :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
-    .card { border-radius: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border: 1px solid #e5e7eb; }
+    .card { @apply rounded-2xl shadow-md bg-white/90 backdrop-blur border border-gray-200; }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-800">
   <header class="max-w-5xl mx-auto px-4 pt-10 pb-6">
     <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Romanic <span class="text-indigo-600">Dictionary</span> & <span class="text-indigo-600">Conjugator</span></h1>
-    <p class="text-slate-600 mt-2">Static, fast, and free to host. Type to search; click a verb to conjugate it.</p>
+    <p class="text-slate-600 mt-2">Type to search; click a verb to conjugate it.</p>
   </header>
 
   <main class="max-w-5xl mx-auto px-4 pb-24">
+    <!-- Search Bar -->
     <section class="card p-4 sm:p-6">
       <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="relative flex-1">
@@ -39,6 +41,7 @@
       <p class="mt-3 text-xs text-slate-500">Tip: link directly to a word with <code>?q=parlar</code>. All data lives in <code>window.ROMANIC_LEXICON</code>.</p>
     </section>
 
+    <!-- Results & Details Grid -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
       <aside class="lg:col-span-5 card p-0 overflow-hidden">
         <div class="px-4 py-3 border-b bg-slate-50/60">Results</div>
@@ -56,64 +59,142 @@
       </article>
     </section>
 
+    <!-- Footer -->
     <footer class="mt-8 text-xs text-slate-500 text-center">Made for Romanic learners · Host anywhere · MIT License</footer>
   </main>
 
 <script>
+// ==========================
+// 1) DATA — Edit/expand me!
+// ==========================
+// Minimal starter lexicon to show the schema. Replace or extend freely.
+// Lemma fields:
+// - lemma: base form
+// - pos: 'verb' | 'noun' | 'adj' | etc.
+// - class: for verbs 'ar' | 'er' | 'ir' (used by the conjugator)
+// - senses: array of short defs/glosses
+// - gender: for nouns 'm' | 'f' (optional)
+// - examples: [{ro:"Jo parlo Romanic.", en:"I speak Romanic."}]
+// - irregular: overrides by tense:person (e.g., irregular.present.jo)
 window.ROMANIC_LEXICON = [
+  // --- Verbs ---
   { lemma: "parlar", pos: "verb", class: "ar", senses: ["to speak","to talk"], examples: [{ ro:"Nos parlamos Romanic.", en:"We speak Romanic." }] },
   { lemma: "amar", pos: "verb", class: "ar", senses: ["to love"] },
   { lemma: "viver", pos: "verb", class: "er", senses: ["to live"] },
   { lemma: "dormir", pos: "verb", class: "ir", senses: ["to sleep"] },
-  { lemma: "infante", pos: "noun", gender:"m", senses:["child","infant"] },
-  { lemma: "medico", pos: "noun", gender:"m", senses:["doctor"], examples:[{ ro:"Jo som medico.", en:"I am a doctor."}] },
-  { lemma: "hospital", pos:"noun", gender:"m", senses:["hospital"] },
-  { lemma: "blau", pos:"adj", senses:["blue"] },
-  { lemma:"esser", pos:"verb", class:"er", senses:["to be"], irregular:{
+  { lemma: "esser", pos: "verb", class: "er", senses: ["to be"], irregular: {
       present:{ jo:"som", tu:"es", il:"es", ila:"es", nos:"somos", vos:"sotes", illes:"son" },
-      imperfeto:{ jo:"era", tu:"eras", il:"era", ila:"era", nos:"eramos", vos:"erates", illes:"eran" }
-  }}
+      imperfecto:{ jo:"era", tu:"eras", il:"era", ila:"era", nos:"eramos", vos:"erates", illes:"eran" }
+  }},
+
+  // --- Nouns (with gender) ---
+  { lemma: "infante", pos: "noun", gender: "m", senses: ["child","infant"] },
+  { lemma: "medico", pos: "noun", gender: "m", senses: ["doctor"], examples:[{ ro:"Jo som medico.", en:"I am a doctor."}] },
+  { lemma: "medica", pos: "noun", gender: "f", senses: ["doctor (f)"] },
+  { lemma: "hospital", pos: "noun", gender: "m", senses: ["hospital"] },
+  { lemma: "sposa", pos: "noun", gender: "f", senses: ["wife"] },
+  { lemma: "spose", pos: "noun", gender: "m", senses: ["husband"] },
+
+  // --- Adjectives ---
+  { lemma: "blau", pos: "adj", senses: ["blue"] },
+
+  // --- Pronouns & Determiners ---
+  // Personal pronouns (subject)
+  { lemma: "jo", pos: "pron", senses:["I","me"], features:{ type:"personal", person:1, number:"sg", case:"subject" } },
+  { lemma: "tu", pos: "pron", senses:["you (singular)"], features:{ type:"personal", person:2, number:"sg", case:"subject" } },
+  { lemma: "il", pos: "pron", senses:["he"], features:{ type:"personal", person:3, number:"sg", gender:"m", case:"subject" } },
+  { lemma: "ila", pos: "pron", senses:["she"], features:{ type:"personal", person:3, number:"sg", gender:"f", case:"subject" } },
+  { lemma: "nos", pos: "pron", senses:["we","us"], features:{ type:"personal", person:1, number:"pl", case:"subject" } },
+  { lemma: "vos", pos: "pron", senses:["you (plural)"], features:{ type:"personal", person:2, number:"pl", case:"subject" } },
+  { lemma: "illes", pos: "pron", senses:["they"], features:{ type:"personal", person:3, number:"pl", case:"subject" } },
+
+  // Possessive adjectives/determiners
+  { lemma: "mie", pos: "det", senses:["my"], features:{ type:"possessive", person:1, number:"sg", agrees_with:"noun" } },
+  { lemma: "tue", pos: "det", senses:["your (sg)"], features:{ type:"possessive", person:2, number:"sg", agrees_with:"noun" } },
+  { lemma: "sue", pos: "det", senses:["his/her/its"], features:{ type:"possessive", person:3, number:"sg", agrees_with:"noun" } },
+  { lemma: "nostre", pos: "det", senses:["our"], features:{ type:"possessive", person:1, number:"pl", agrees_with:"noun" } },
+  { lemma: "vostre", pos: "det", senses:["your (pl)"], features:{ type:"possessive", person:2, number:"pl", agrees_with:"noun" } },
+  { lemma: "lore", pos: "det", senses:["their"], features:{ type:"possessive", person:3, number:"pl", agrees_with:"noun" } },
+
+  // Possessive independent (pronouns)
+  { lemma: "mio", pos: "pron", senses:["mine"], features:{ type:"possessive", person:1, number:"sg" } },
+  { lemma: "tio", pos: "pron", senses:["yours (sg)"], features:{ type:"possessive", person:2, number:"sg" } },
+  { lemma: "suo", pos: "pron", senses:["his/hers"], features:{ type:"possessive", person:3, number:"sg" } },
+  { lemma: "nostro", pos: "pron", senses:["ours"], features:{ type:"possessive", person:1, number:"pl" } },
+  { lemma: "vostro", pos: "pron", senses:["yours (pl)"], features:{ type:"possessive", person:2, number:"pl" } },
+  { lemma: "loro", pos: "pron", senses:["theirs"], features:{ type:"possessive", person:3, number:"pl" } },
 ];
 
+// ==========================
+// 2) CONJUGATION ENGINE
+// ==========================
 const PRONOUNS = ["jo","tu","il","ila","nos","vos","illes"];
-const LABELS = { jo:"1s", tu:"2s", il:"3s (m)", ila:"3s (f)", nos:"1p", vos:"2p", illes:"3p" };
+const LABELS   = { jo:"1s", tu:"2s", il:"3s (m)", ila:"3s (f)", nos:"1p", vos:"2p", illes:"3p" };
 
 const ENDINGS = {
   present: {
-    ar:["o","es","a","a","amos","ates","an"],
-    er:["o","es","e","e","emos","etes","en"],
-    ir:["o","es","e","e","imos","ites","en"],
+    ar: ["o","es","a","a","amos","ates","an"],
+    er: ["o","es","e","e","emos","etes","en"],
+    ir: ["o","es","e","e","imos","ites","en"],
   },
-  imperfeto: {
-    ar:["avo","avas","ava","ava","avamos","avates","avan"],
-    er:["eva","evas","eva","eva","evamos","evates","evan"],
-    ir:["eva","evas","eva","eva","evamos","evates","evan"],
+  imperfecto: {
+    ar: ["avo","avas","ava","ava","avamos","avates","avan"],
+    er: ["eva","evas","eva","eva","evamos","evates","evan"],
+    ir: ["eva","evas","eva","eva","evamos","evates","evan"],
   },
 };
 
 function stemOf(lemma, vclass){
-  return ["ar","er","ir"].includes(vclass) ? lemma.slice(0,-vclass.length) : lemma;
+  if(!["ar","er","ir"].includes(vclass)) return lemma;
+  return lemma.slice(0, -vclass.length);
 }
 
 function conjugate(entry, tense){
-  if(entry.pos!=='verb') return null;
+  if(entry.pos !== 'verb') return null;
   const vclass = entry.class;
-  const stem = stemOf(entry.lemma, vclass);
-  const endings = ENDINGS[tense]?.[vclass];
-  if(!endings) return null;
+  const stems = stemOf(entry.lemma, vclass);
+  const end = ENDINGS[tense]?.[vclass];
+  if(!end) return null;
   const forms = {};
-  PRONOUNS.forEach((p,i)=>{
-    const irr = entry.irregular?.[tense]?.[p];
-    forms[p] = irr || (stem + endings[i]);
+  PRONOUNS.forEach((p, i) => {
+    const irregular = entry.irregular?.[tense]?.[p];
+    forms[p] = irregular || (stems + end[i]);
   });
-  forms.participio = (vclass==="ar"?stem+"ado":stem+"ido");
-  forms.gerundio   = (vclass==="ar"?stem+"ando":stem+"iendo");
+  // add non‑finite forms
+  forms.participio = (vclass === 'ar' ? stems + 'ado' : stems + 'ido');
+  forms.gerundio   = (vclass === 'ar' ? stems + 'ando' : stems + 'iendo');
   return forms;
 }
 
-function normalize(s){return (s||"").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,"");}
+// ==========================
+// 3) UI RENDERING
+// ==========================
+const $q = document.getElementById('q');
+const $results = document.getElementById('results');
+const $entry = document.getElementById('entry');
+const $clearBtn = document.getElementById('clearBtn');
+const $fuzzy = document.getElementById('fuzzy');
+const $exportBtn = document.getElementById('exportBtn');
+const $copyPermalink = document.getElementById('copyPermalink');
+
+function normalize(s){ return (s||'').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+
+function searchLexicon(q, fuzzy){
+  const nq = normalize(q);
+  if(!nq) return window.ROMANIC_LEXICON;
+  return window.ROMANIC_LEXICON.filter(e => {
+    const inLemma = normalize(e.lemma).includes(nq);
+    const inSenses = (e.senses||[]).some(def => normalize(def).includes(nq));
+    if(inLemma || inSenses) return true;
+    if(!fuzzy){ return false; }
+    // Simple fuzzy: allow 1 missing/extra char on lemma
+    const L = normalize(e.lemma);
+    return Math.abs(L.length - nq.length) <= 1 && levenshtein(L, nq) <= 1;
+  });
+}
+
 function levenshtein(a,b){
-  const m = Array.from({length:a.length+1},(_,i)=>[i]);
+  const m = Array.from({length:a.length+1}, (_,i)=>[i]);
   for(let j=1;j<=b.length;j++) m[0][j]=j;
   for(let i=1;i<=a.length;i++){
     for(let j=1;j<=b.length;j++){
@@ -124,88 +205,73 @@ function levenshtein(a,b){
   return m[a.length][b.length];
 }
 
-const $q=document.getElementById("q");
-const $results=document.getElementById("results");
-const $entry=document.getElementById("entry");
-const $clearBtn=document.getElementById("clearBtn");
-const $fuzzy=document.getElementById("fuzzy");
-const $exportBtn=document.getElementById("exportBtn");
-const $copyPermalink=document.getElementById("copyPermalink");
-
-function searchLexicon(q,fuzzy){
-  const nq=normalize(q);
-  if(!nq) return window.ROMANIC_LEXICON;
-  return window.ROMANIC_LEXICON.filter(e=>{
-    const inLemma = normalize(e.lemma).includes(nq);
-    const inSenses=(e.senses||[]).some(def=>normalize(def).includes(nq));
-    if(inLemma||inSenses) return true;
-    if(!fuzzy) return false;
-    const L=normalize(e.lemma);
-    return Math.abs(L.length-nq.length)<=1 && levenshtein(L,nq)<=1;
-  });
-}
-
 function renderResults(items){
-  $results.innerHTML="";
+  $results.innerHTML = '';
   if(items.length===0){
-    $results.innerHTML='<li class="p-4 text-slate-500">No matches.</li>';
+    $results.innerHTML = '<li class="p-4 text-slate-500">No matches.</li>';
     return;
   }
-  items.forEach(e=>{
-    const isVerb=e.pos==="verb";
-    const li=document.createElement("li");
-    li.className="p-4 hover:bg-slate-50 cursor-pointer";
-    li.innerHTML=`
+  items.forEach((e,i)=>{
+    const isVerb = e.pos==='verb';
+    const li = document.createElement('li');
+    li.className = 'p-4 hover:bg-slate-50 cursor-pointer';
+    li.innerHTML = `
       <div class="flex items-start justify-between gap-3">
         <div>
-          <div class="font-semibold">${e.lemma} <span class="text-xs text-slate-500">${e.pos}${isVerb?(" · -"+e.class):""}</span></div>
-          <div class="text-slate-600 text-sm">${(e.senses||[]).join("; ")}</div>
+          <div class="font-semibold">${e.lemma} <span class="text-xs text-slate-500 align-middle">${e.pos}${e.pos==='verb'?(' · -'+e.class):''}${e.pos==='noun'&&e.gender?(' · '+e.gender):''}</span></div>
+          <div class="text-slate-600 text-sm">${(e.senses||[]).join('; ')}</div>
         </div>
-        ${isVerb?'<span class="text-[11px] px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">conjugate</span>':""}
+        ${e.pos==='verb'?'<span class="text-[11px] px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">conjugate</span>':''}
       </div>`;
-    li.addEventListener("click",()=>selectEntry(e));
+    li.addEventListener('click',()=> selectEntry(e));
     $results.appendChild(li);
   });
 }
 
 function selectEntry(e){
-  history.replaceState(null,"",`?q=${encodeURIComponent(e.lemma)}`);
-  const isVerb=e.pos==="verb";
-  const defs=(e.senses||[]).map(d=>`<li>${d}</li>`).join("");
-  const exs=(e.examples||[]).map(ex=>`<li>${ex.ro} — <span class="text-slate-400">${ex.en||""}</span></li>`).join("");
-  let conj="";
-  if(isVerb) conj=renderConjugator(e);
-  $entry.innerHTML=`
+  history.replaceState(null, '', `?q=${encodeURIComponent(e.lemma)}`);
+  const isVerb = e.pos==='verb';
+  const defs = (e.senses||[]).map((d,i)=>`<li>${d}</li>`).join('');
+  const exs = (e.examples||[]).map(ex=>`<li><span class="text-slate-800">${ex.ro}</span> <span class="text-slate-400">— ${ex.en||''}</span></li>`).join('');
+  const feats = e.features ? Object.entries(e.features).map(([k,v])=>`<tr><td class="py-1 pr-4 text-slate-500">${k}</td><td class="py-1">${Array.isArray(v)?v.join(', '):v}</td></tr>`).join('') : '';
+
+  let conjBlock = '';
+  if(isVerb){
+    conjBlock = renderConjugator(e);
+  }
+  $entry.innerHTML = `
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold">${e.lemma}</h2>
-      <span class="text-xs px-2 py-1 rounded-lg border">${e.pos}${isVerb?(" · -"+e.class):""}</span>
+      <span class="text-xs px-2 py-1 rounded-lg border">${e.pos}${e.pos==='verb'?(' · -'+e.class):''}${e.pos==='noun'&&e.gender?(' · '+e.gender):''}</span>
     </div>
-    ${defs?`<div class="mt-3"><strong>Senses</strong><ul class="list-disc ml-5">${defs}</ul></div>`:""}
-    ${exs?`<div class="mt-3"><strong>Examples</strong><ul class="list-disc ml-5">${exs}</ul></div>`:""}
-    ${conj}
+    ${(e.senses&&e.senses.length)?`<div class=\"mt-3\"><div class=\"font-semibold\">Senses</div><ul class=\"list-disc list-inside\">${(e.senses||[]).map(d=>`<li>${d}</li>`).join('')}</ul></div>`:''}
+    ${exs?`<div class=\"mt-3\"><div class=\"font-semibold\">Examples</div><ul class=\"list-disc list-inside\">${exs}</ul></div>`:''}
+    ${feats?`<div class=\"mt-3\"><div class=\"font-semibold\">Features</div><div class=\"overflow-x-auto\"><table class=\"text-sm\"><tbody>${feats}</tbody></table></div></div>`:''}
+    ${e.pos==='verb'?renderConjugator(e):''}
   `;
 }
 
 function renderConjugator(entry){
-  const tenses=Object.keys(ENDINGS);
-  const forms=conjugate(entry,tenses[0]);
+  const tenses = Object.keys(ENDINGS);
+  const options = tenses.map(t=>`<option value="${t}">${title(t)}</option>`).join('');
+  const forms = conjugate(entry, tenses[0]);
   return `
   <div class="mt-6">
     <div class="flex items-center gap-3">
       <div class="font-semibold">Conjugations</div>
       <select id="tense" class="px-3 py-2 rounded-lg border">
-        ${tenses.map(t=>`<option value="${t}">${t}</option>`).join("")}
+        ${options}
       </select>
-      <div class="text-xs text-slate-500">(auto-adds participle & gerund)</div>
+      <div class="text-xs text-slate-500">(auto‑adds participle & gerund)</div>
     </div>
     <div id="tableWrap" class="mt-3">${renderTable(forms)}</div>
   </div>
   <script>
     (function(){
-      const select=document.getElementById('tense');
-      select.addEventListener('change',()=>{
-        const forms=(${conjugate.toString()})(${JSON.stringify(entry)},select.value);
-        document.getElementById('tableWrap').innerHTML=\`${renderTable(forms)}\`;
+      const select = document.getElementById('tense');
+      select.addEventListener('change', ()=>{
+        const forms = (${conjugate.toString()})(${JSON.stringify(entry)}, select.value);
+        document.getElementById('tableWrap').innerHTML = `${renderTable(forms)}`;
       });
     })();
   <\/script>
@@ -214,58 +280,56 @@ function renderConjugator(entry){
 
 function renderTable(forms){
   if(!forms) return '<p class="text-slate-500">No forms.</p>';
-  const rows=PRONOUNS.map(p=>`
-    <tr class="border-b">
-      <td class="py-2 pr-3 text-slate-500">${p} <span class="text-slate-400">${LABELS[p]}</span></td>
-      <td class="py-2 font-medium">${forms[p]}</td>
-    </tr>`).join("");
+  const rows = PRONOUNS.map(p=>`<tr class="border-b"><td class="py-2 pr-3 text-slate-500">${p} <span class="text-slate-400">${LABELS[p]}</span></td><td class="py-2 font-medium">${forms[p]}</td></tr>`).join('');
   return `
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
         <tbody>${rows}
-          <tr><td class="py-2 pr-3 text-slate-500">participio</td><td>${forms.participio||"-"}</td></tr>
-          <tr><td class="py-2 pr-3 text-slate-500">gerundio</td><td>${forms.gerundio||"-"}</td></tr>
+          <tr><td class="py-2 pr-3 text-slate-500">participio</td><td class="py-2">${forms.participio||'-'}</td></tr>
+          <tr><td class="py-2 pr-3 text-slate-500">gerundio</td><td class="py-2">${forms.gerundio||'-'}</td></tr>
         </tbody>
       </table>
     </div>`;
 }
 
+function title(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+// Wire up search
 function runSearch(){
-  const query=$q.value.trim();
-  const items=searchLexicon(query,$fuzzy.checked);
+  const query = $q.value.trim();
+  const items = searchLexicon(query, $fuzzy.checked);
   renderResults(items);
-  $clearBtn.classList.toggle("hidden",query.length===0);
+  $clearBtn.classList.toggle('hidden', query.length===0);
 }
+$q.addEventListener('input', runSearch);
+$fuzzy.addEventListener('change', runSearch);
+$clearBtn.addEventListener('click', ()=>{ $q.value=''; runSearch(); $q.focus(); });
 
-$q.addEventListener("input",runSearch);
-$fuzzy.addEventListener("change",runSearch);
-$clearBtn.addEventListener("click",()=>{$q.value="";runSearch();$q.focus();});
-
-$exportBtn.addEventListener("click",()=>{
-  const data=JSON.stringify(window.ROMANIC_LEXICON,null,2);
-  const blob=new Blob([data],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download="romanic_lexicon.json";
-  a.click();URL.revokeObjectURL(url);
+// Export JSON
+$exportBtn.addEventListener('click', ()=>{
+  const data = JSON.stringify(window.ROMANIC_LEXICON, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'romanic_lexicon.json';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 });
 
-$copyPermalink.addEventListener("click",async()=>{
-  try{
-    await navigator.clipboard.writeText(location.href);
-    $copyPermalink.textContent="Copied!";
-    setTimeout(()=>($copyPermalink.textContent="Copy link"),1200);
-  }catch(e){}
+// Permalink copier
+$copyPermalink.addEventListener('click', async ()=>{
+  try { await navigator.clipboard.writeText(location.href); $copyPermalink.textContent = 'Copied!'; setTimeout(()=> $copyPermalink.textContent='Copy link', 1200);} catch(e){}
 });
 
-(function init(){
-  const params=new URLSearchParams(location.search);
-  const q=params.get("q");
+// Initialize from URL param
+(function initFromQuery(){
+  const params = new URLSearchParams(location.search);
+  const q = params.get('q');
   if(q){
-    $q.value=q;runSearch();
-    const item=window.ROMANIC_LEXICON.find(e=>normalize(e.lemma)===normalize(q));
+    $q.value = q; runSearch();
+    // auto‑open the best match
+    const item = window.ROMANIC_LEXICON.find(e=>normalize(e.lemma)===normalize(q));
     if(item) selectEntry(item);
-  }else{
+  } else {
     runSearch();
   }
 })();
